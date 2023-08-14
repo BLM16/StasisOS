@@ -1,0 +1,9 @@
+services:
+  StasisOS:
+    container_name: stasis-os-cross-compiler
+    image: stasis-os-cross-compiler
+    build: .
+    volumes:
+      - .:/root/env
+    stdin_open: true
+    tty: true
