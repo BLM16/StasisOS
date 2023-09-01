@@ -22,7 +22,7 @@ namespace drivers::keyboard
             // Key pressed
             if (scan_code < 0x80)
             {
-                switch (key)
+                switch (scan_code)
                 {
                     // No scan code to handle (likely an error)
                     case K_NULL:
@@ -94,7 +94,7 @@ namespace drivers::keyboard
             // Key released
             else
             {
-                switch (key)
+                switch (scan_code)
                 {
                     // No scan code to handle (likely an error)
                     case K_NULL:
