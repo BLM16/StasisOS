@@ -5,6 +5,12 @@ namespace drivers::video::VGA
     const static size_t NUM_COLS = 80; // The number of columns in the VGA
     const static size_t NUM_ROWS = 25; // The number of rows in the VGA
 
+    /// @brief A blank cell to represent a lack of data.
+    const VGA_Cell blank_cell = {
+        .character = ' ',
+        .color = Color::from(Color::WHITE, Color::BLACK),
+    };
+
     /// @brief The currently active brush/color for printing to the VGA.
     uint8_t current_color = Color::from(Color::WHITE, Color::BLACK);
 
@@ -14,18 +20,21 @@ namespace drivers::video::VGA
         .col = 0,
     };
 
+    /// @brief Clears the given cell by filling it with a blank.
+    /// @param row The row of the cell to clear.
+    /// @param col The column of the cell to clear.
+    static inline void clear_cell(size_t row, size_t col)
+    {
+        VGA_BUFFER[col + NUM_COLS * row] = blank_cell;
+    }
+
     /// @brief Clears the specified row of the VGA.
     /// @param row The row index to clear.
     static void clear_row(size_t row)
     {
-        const VGA_Cell empty = {
-            .character = ' ',
-            .color = Color::from(Color::WHITE, Color::BLACK),
-        };
-
         for (size_t col = 0; col < NUM_COLS; col++)
         {
-            VGA_BUFFER[col + NUM_COLS * row] = empty;
+            clear_cell(row, col);
         }
     }
 
@@ -72,34 +81,65 @@ namespace drivers::video::VGA
     {
         cursor.col += TAB_SIZE;
     }
+
+    /// @brief Clears the character in the previous cell by updating the cursor's location and printing a blank.
+    static void print_backspace()
+    {
+        if (cursor.col == 0)
+        {
+            cursor.col = NUM_COLS - 1;
+
+            if (cursor.row == 0)
+            {
+                cursor.row = 0;
+                cursor.col = 0;
+            }
+            else
+            {
+                cursor.row--;
+            }
+        }
+        else
+        {
+            cursor.col--;
+        }
+
+        clear_cell(cursor.row, cursor.col);
+    }
     
     /// @brief Prints a single character to the VGA at the current cursor location.
     /// @param character The character to print.
     void print_chr(uint8_t character)
     {
-        if (character == '\n')
+        switch (character)
         {
-            print_newline();
-            return;
+            case '\n':
+                print_newline();
+                break;
+
+            case '\t':
+                print_tab();
+                break;
+
+            case '\b':
+                print_backspace();
+                break;
+        
+            default:
+            {
+                if (cursor.col >= NUM_COLS)
+                {
+                    print_newline();
+                }
+
+                VGA_BUFFER[cursor.col + NUM_COLS * cursor.row] = (VGA_Cell) {
+                    .character = character,
+                    .color = current_color,
+                };
+
+                cursor.col++;
+            }
         }
-
-        if (character == '\t')
-        {
-            print_tab();
-            return;
-        }
-
-        if (cursor.col >= NUM_COLS)
-        {
-            print_newline();
-        }
-
-        VGA_BUFFER[cursor.col + NUM_COLS * cursor.row] = (VGA_Cell) {
-            .character = character,
-            .color = current_color,
-        };
-
-        cursor.col++;
     }
 
     /// @brief Prints a null-terminated string to the VGA starting at the current cursor location.

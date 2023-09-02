@@ -33,6 +33,7 @@ namespace drivers::keyboard
                         break;
 
                     case K_BKSP:
+                        VGA::print_chr('\b');
                         break;
 
                     case K_ENTR:
