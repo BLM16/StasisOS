@@ -29,6 +29,7 @@ long_mode_start:
     call kernel_main
 
     ; hang the CPU if the kernel falls through
+    cli
     .hang:
         hlt
         jmp .hang
