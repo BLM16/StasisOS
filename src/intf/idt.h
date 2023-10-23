@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include "isr.h"
+#include "gdt.h"
+#include "pic.h"
 
 #define IDT_ENTRIES 256
 
@@ -27,3 +30,8 @@ typedef struct __attribute__((packed)) IDT_Ptr {
 } IDT_Ptr;
 
 extern "C" void init_idt();
+
+/// @brief `cli`
+inline void __clear_interrupts() { asm volatile("cli"); }
+/// @brief `sti`
+inline void __enable_interrupts() { asm volatile("sti"); }

@@ -1,18 +1,21 @@
 bits 32
 
 global start
+global stack_top
 
 extern test_multiboot, test_cpuid, test_long_mode
 extern setup_page_tables, enable_paging
 extern gdt_descriptor, SEG_KERNEL_CODE
 extern long_mode_start
 
-section .text
+%define KERNEL_VMA 0xFFFFFFFF80000000
+
+section .boot.text progbits alloc exec nowrite align=16
 start:  
     cli ; clear interrupts
 
     ; setup the stack
-    mov ebp, stack_top
+    mov ebp, stack_top - KERNEL_VMA
     mov esp, ebp
 
     ; test requirements for long mode support (error and hlt if fail)
@@ -25,7 +28,8 @@ start:
     call enable_paging
 
     ; load GDT
-    lgdt [gdt_descriptor]
+    mov eax, gdt_descriptor - KERNEL_VMA
+    lgdt [eax]
 
     ; start long mode
     jmp SEG_KERNEL_CODE:long_mode_start
@@ -33,5 +37,5 @@ start:
 section .bss
 align 4096
 stack_bottom:
-    resb 4096 * 4
+    resb 4096 * 4 ; 16 KiB 
 stack_top:

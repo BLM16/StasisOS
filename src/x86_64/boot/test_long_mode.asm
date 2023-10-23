@@ -4,19 +4,21 @@ global test_multiboot
 global test_cpuid
 global test_long_mode
 
-section .text
+%define KERNEL_VMA 0xFFFFFFFF80000000
 
-; Tests for multiboot capability
+section .boot.text
+
+; tests for multiboot capability
 test_multiboot:
     cmp eax, 0x36D76289
     jne .no_multiboot
     ret
 
     .no_multiboot:
-        mov eax, MSG_NO_MULTIBOOT
+        mov eax, MSG_NO_MULTIBOOT - KERNEL_VMA
         jmp error
 
-; Tests for cpuid support
+; tests for cpuid support
 test_cpuid:
     pushfd
     pop eax
@@ -33,10 +35,10 @@ test_cpuid:
     ret
 
     .no_cpuid:
-        mov eax, MSG_NO_CPUID
+        mov eax, MSG_NO_CPUID - KERNEL_VMA
         jmp error
 
-; Tests for long mode capability
+; tests for long mode capability
 test_long_mode:
     mov eax, 0x80000000
     cpuid
@@ -50,7 +52,7 @@ test_long_mode:
     ret
     
     .no_long_mode:
-        mov eax, MSG_NO_LONG_MODE
+        mov eax, MSG_NO_LONG_MODE - KERNEL_VMA
         jmp error
 
 ; print the error message from eax to the VGA buffer then hlt

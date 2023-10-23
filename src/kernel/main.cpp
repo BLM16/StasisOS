@@ -1,4 +1,6 @@
 #include "drivers/video/vga.h"
+#include "pic.h"
+#include "idt.h"
 
 namespace VGA = drivers::video::VGA;
 namespace Color = VGA::Color;
@@ -8,6 +10,13 @@ void print_welcome();
 /// @brief The entry point into the StasisOS kernel.
 extern "C" void kernel_main()
 {
+    // Remap the PIC interrupt vectors to 0x20..0x2F
+    remap_pic(0x20, 0x28);
+
+    // Set interrupt handlers
+    init_idt();
+    __enable_interrupts();
+
     // Print the startup banner
     VGA::clear_screen();
     print_welcome();

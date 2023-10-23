@@ -2,11 +2,9 @@ bits 64
 
 global long_mode_start
 
-extern remap_pic
-extern init_idt
-extern kernel_main
+section .boot.text
 
-section .text
+; trampolines to the kernel_start wrapper in the higher-half
 long_mode_start:
     ; null all data segment registers
     xor eax, eax
@@ -16,17 +14,20 @@ long_mode_start:
     mov gs, ax
     mov ss, ax
 
-    ; remap the PIC interrupt vectors to 0x20..0x2F
-    mov esi, 0x28 ; slave_offset (0x28..0x2F)
-    mov edi, 0x20 ; master_offset (0x20..0x27)
-    call remap_pic
-    
-    ; Enable interrupts
-    call init_idt
-    sti
+    jmp kernel_start
 
-    ; start the kernel
-    call kernel_main
+section .text
+bits 64
+
+extern kernel_main
+extern stack_top
+
+kernel_start:
+    ; reload the stack with the virtual memory address
+    lea rbp, [stack_top]
+    mov rsp, rbp
+
+    call kernel_main ; jump into kernel code
 
     ; hang the CPU if the kernel falls through
     cli
