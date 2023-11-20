@@ -14,6 +14,9 @@ section .boot.text progbits alloc exec nowrite align=16
 start:  
     cli ; clear interrupts
 
+    mov esi, eax ; save MB2 magic
+    mov edi, ebx ; save MBI pointer
+
     ; setup the stack
     mov ebp, stack_top - KERNEL_VMA
     mov esp, ebp

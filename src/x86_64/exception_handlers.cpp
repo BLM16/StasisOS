@@ -1,5 +1,8 @@
 #include "isr.h"
 
+#include "drivers/video/vga.h"
+#include "klib/stdio.h"
+
 namespace VGA = drivers::video::VGA;
 namespace Color = VGA::Color;
 
@@ -20,9 +23,6 @@ const char* exception_names[] = {
 /// @param frame The stack frame for the exception.
 void exception_handler(Exception_Stack_Frame frame)
 {
-    const char* exception_name = exception_names[frame.int_no];
-
     VGA::set_color(Color::WHITE, Color::RED);
-    VGA::print_str("ERR: #");
-    VGA::print_str(exception_name);
+    printf("ERR: #%s", exception_names[frame.int_no]);
 }

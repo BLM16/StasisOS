@@ -10,7 +10,7 @@ section .boot.text
 
 ; tests for multiboot capability
 test_multiboot:
-    cmp eax, 0x36D76289
+    cmp esi, 0x36D76289
     jne .no_multiboot
     ret
 

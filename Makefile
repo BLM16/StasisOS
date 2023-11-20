@@ -1,4 +1,4 @@
-CFLAGS  = -c -g -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fstack-protector -mgeneral-regs-only -fPIC -mcmodel=large -Wall -Wextra
+CFLAGS  = -c -g -ffreestanding -mno-red-zone -mno-mmx -mno-sse -mno-sse2 -fno-stack-protector -mgeneral-regs-only -fPIC -mcmodel=large -Wall -Wextra
 ASFLAGS = -g -F dwarf
 LDFLAGS = -n
 
