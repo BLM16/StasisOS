@@ -8,7 +8,7 @@
 #define MB2_TYPE_END          0
 #define MB2_TYPE_CMDLINE      1
 #define MB2_TYPE_BOOTLOADER   2
-#define MB2_TYPE_MODULES      3
+#define MB2_TYPE_MODULE       3
 #define MB2_TYPE_MEMINFO      4
 #define MB2_TYPE_BIOSDEV      5
 #define MB2_TYPE_MEMMAP       6
@@ -30,8 +30,8 @@
 
 #define MB2_MEM_AVAILABLE   1
 #define MB2_MEM_RESERVED    2
-#define MB2_MEM_USABLE_ACPI 3
-#define MB2_MEM_PRESERVE    4
+#define MB2_MEM_RECLAIMABLE 3
+#define MB2_MEM_NVS         4
 #define MB2_MEM_DEFECTIVE   5
 
 #define MB2_FBUFF_TYPE_INDEXED  0
@@ -51,22 +51,22 @@ typedef struct __packed MB2_information_structure {
 typedef struct __packed MB2_tag_cmdline {
     uint32_t type;
     uint32_t size;
-    uint8_t* string;
+    uint8_t string[];
 } MB2_tag_cmdline;
 
 typedef struct __packed MB2_tag_bootloader {
     uint32_t type;
     uint32_t size;
-    uint8_t* string;
+    uint8_t string[];
 } MB2_tag_bootloader;
 
-typedef struct __packed MB2_tag_modules {
+typedef struct __packed MB2_tag_module {
     uint32_t type;
     uint32_t size;
     uint32_t mod_start;
     uint32_t mod_end;
-    uint8_t* string;
-} MB2_tag_modules;
+    uint8_t string[];
+} MB2_tag_module;
 
 typedef struct __packed MB2_tag_meminfo {
     uint32_t type;
@@ -95,7 +95,7 @@ typedef struct __packed MB2_tag_memmap {
     uint32_t size;
     uint32_t entry_size;
     uint32_t entry_version;
-    MB2_memmap_entry* entries;
+    MB2_memmap_entry entries[];
 } MB2_tag_memmap;
 
 typedef struct __packed MB2_tag_vbeinfo {
@@ -130,7 +130,7 @@ typedef struct __packed MB2_tag_fbuffinfo {
     {
         struct {
             uint16_t framebuffer_palette_num_colors;
-            MB2_color* framebuffer_palette;
+            MB2_color framebuffer_palette[];
         };
         struct {
             uint8_t framebuffer_red_field_position;
@@ -161,25 +161,25 @@ typedef struct __packed MB2_tag_smbiostab {
     uint8_t major;
     uint8_t minor;
     uint8_t reserved[6];
-    uint8_t* smbios_tables;
+    uint8_t smbios_tables[];
 } MB2_tag_smbiostab;
 
 typedef struct __packed MB2_tag_acpiold {
     uint32_t type;
     uint32_t size;
-    uint8_t* rsdp;
+    uint8_t rsdp[];
 } MB2_tag_acpiold;
 
 typedef struct __packed MB2_tag_acpinew {
     uint32_t type;
     uint32_t size;
-    uint8_t* rsdp;
+    uint8_t rsdp[];
 } MB2_tag_acpinew;
 
 typedef struct __packed MB2_tag_network {
     uint32_t type;
     uint32_t size;
-    uint8_t* dhcpack;
+    uint8_t dhcpack[];
 } MB2_tag_network;
 
 typedef struct __packed MB2_tag_efimemmap {
@@ -187,7 +187,7 @@ typedef struct __packed MB2_tag_efimemmap {
     uint32_t size;
     uint32_t descriptor_size;
     uint32_t descriptor_version;
-    uint8_t* efi_memmap;
+    uint8_t efi_memmap[];
 } MB2_tag_efimemmap;
 
 typedef struct __packed MB2_tag_efibootnt {

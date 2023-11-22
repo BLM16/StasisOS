@@ -2,6 +2,7 @@
 
 #include "drivers/video/vga.h"
 #include "klib/stdio.h"
+#include "kernel/util/panic.h"
 
 namespace VGA = drivers::video::VGA;
 namespace Color = VGA::Color;
@@ -13,8 +14,7 @@ void parse_multiboot(const MB2_information_structure* MBI)
     // Ensure the MBI is properly aligned
     if (mbi_addr & 7)
     {
-        VGA::set_color(Color::RED, Color::BLACK);
-        printf("Err: Unaligned MBI");
+        kpanic("Err: Unaligned MBI");
         return;
     }
 
@@ -28,15 +28,15 @@ void parse_multiboot(const MB2_information_structure* MBI)
         switch (tag->type)
         {
         case MB2_TYPE_CMDLINE:
-            printf("Command line found.\n");
+            printf("Command line found: %s\n", reinterpret_cast<MB2_tag_cmdline*>(tag)->string);
             break;
 
         case MB2_TYPE_BOOTLOADER:
-            printf("Boot loader found.\n");
+            printf("Boot loader found: %s\n", reinterpret_cast<MB2_tag_bootloader*>(tag)->string);
             break;
 
-        case MB2_TYPE_MODULES:
-            printf("Module found.\n");
+        case MB2_TYPE_MODULE:
+            printf("Module found: %s\n", reinterpret_cast<MB2_tag_module*>(tag)->string);
             break;
 
         case MB2_TYPE_MEMINFO:
@@ -51,6 +51,7 @@ void parse_multiboot(const MB2_information_structure* MBI)
 
         case MB2_TYPE_MEMMAP:
             printf("Memory map found.\n");
+            parse_memmap(reinterpret_cast<MB2_tag_memmap*>(tag));
             break;
 
         case MB2_TYPE_VBEINFO:
@@ -110,8 +111,7 @@ void parse_multiboot(const MB2_information_structure* MBI)
             break;
 
         case MB2_TYPE_IMGLDBPA:
-            printf("Image base address found.\n");
-            printf("\t0x%x\n", reinterpret_cast<MB2_tag_imgldbpa*>(tag)->load_base_addr);
+            printf("Image base address found: 0x%x\n", reinterpret_cast<MB2_tag_imgldbpa*>(tag)->load_base_addr);
             break;
 
         default:
@@ -119,4 +119,23 @@ void parse_multiboot(const MB2_information_structure* MBI)
             break;
         }
     }
+}
+
+void parse_memmap(MB2_tag_memmap* memmap_tag)
+{
+    size_t num_entries = (memmap_tag->size - sizeof(MB2_tag_memmap)) / memmap_tag->entry_size;
+    size_t available = 0;
+
+    for (size_t i = 0; i < num_entries; i++)
+    {
+        MB2_memmap_entry* entry = &memmap_tag->entries[i];
+        printf("\t[%x, %x] - Type %d\n", entry->base_addr, entry->base_addr + entry->length, entry->type);
+
+        if (entry->type == MB2_MEM_AVAILABLE)
+        {
+            available += entry->length;
+        }
+    }
+    
+    printf("\tAvailable bytes: %d\n", available);
 }

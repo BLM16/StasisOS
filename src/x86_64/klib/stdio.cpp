@@ -47,7 +47,7 @@ char* itoa(int val, char* buf, int radix)
     {
         while (val != 0)
         {
-            int rem = val % radix;
+            uint32_t rem = (uint32_t)val % radix;
             buf[i++] = (rem > 9) ? (rem - 10) + 'a' : rem + '0';
             val = val / radix;
         }
@@ -123,7 +123,7 @@ void vprintf(const char* fmt, va_list args)
                 }
                 case 'x':
                 {
-                    int value = va_arg(vargs, int);
+                    uint32_t value = va_arg(vargs, uint32_t);
                     itoa(value, buf, 16);
                     VGA::print_str(buf);
                     break;
