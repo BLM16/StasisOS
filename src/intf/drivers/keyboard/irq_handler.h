@@ -1,12 +1,12 @@
 #pragma once
 
 #include "keyboard.h"
+#include "util/attributes.h"
 
 namespace drivers::keyboard
 {
-    /// @brief Required by __attribute__((interrupt))
+    /// @brief Required by __interrupt
     struct interrupt_frame;
 
-    __attribute__((interrupt))
-    void irq_handler(interrupt_frame *frame);
+    void __interrupt irq_handler(interrupt_frame *frame);
 }

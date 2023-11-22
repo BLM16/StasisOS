@@ -2,6 +2,7 @@
 
 #include "drivers/video/vga.h"
 #include "klib/stdio.h"
+#include "kernel/util/panic.h"
 
 namespace VGA = drivers::video::VGA;
 namespace Color = VGA::Color;
@@ -23,6 +24,5 @@ const char* exception_names[] = {
 /// @param frame The stack frame for the exception.
 void exception_handler(Exception_Stack_Frame frame)
 {
-    VGA::set_color(Color::WHITE, Color::RED);
-    printf("ERR: #%s", exception_names[frame.int_no]);
+    kpanic("ERR: #%s", exception_names[frame.int_no]);
 }

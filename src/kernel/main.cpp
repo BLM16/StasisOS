@@ -2,6 +2,7 @@
 #include "klib/stdio.h"
 #include "pic.h"
 #include "idt.h"
+#include "util/asm_snippets.h"
 #include "multiboot2.h"
 #include "kernel/mb2_parser.h"
 

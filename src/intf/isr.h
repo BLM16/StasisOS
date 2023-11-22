@@ -1,10 +1,11 @@
 #pragma once
 
 #include <stdint.h>
+#include "util/attributes.h"
 
 /// @brief Represents the stack frame for an exception including
 /// the interrupt number, the error code, and registers for debugging.
-typedef struct __attribute__((packed)) Exception_Stack_Frame {
+typedef struct __packed Exception_Stack_Frame {
     uint64_t rdi, rsi, rbp, rdx, rcx, rbx, rax;
     uint64_t int_no, err_code;
     uint64_t rip, cs, rflags, rsp, ss;

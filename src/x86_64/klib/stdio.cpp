@@ -1,6 +1,5 @@
 #include "klib/stdio.h"
 #include "drivers/video/vga.h"
-#include <stdarg.h>
 
 namespace VGA = drivers::video::VGA;
 namespace Color = VGA::Color;
@@ -77,10 +76,20 @@ char* itoa(int val, char* buf, int radix)
 
 void printf(const char* fmt, ...)
 {
-    char buf[PRINTF_BUFFER_SIZE];
-
     va_list args;
     va_start(args, fmt);
+
+    vprintf(fmt, args);
+
+    va_end(args);
+}
+
+void vprintf(const char* fmt, va_list args)
+{
+    char buf[PRINTF_BUFFER_SIZE];
+
+    va_list vargs;
+    va_copy(vargs, args);
 
     while (*fmt != '\0')
     {
@@ -101,27 +110,27 @@ void printf(const char* fmt, ...)
                 }
                 case 'd':
                 {
-                    int value = va_arg(args, int);
+                    int value = va_arg(vargs, int);
                     itoa(value, buf, 10);
                     VGA::print_str(buf);
                     break;
                 }
                 case 's':
                 {
-                    const char* str = va_arg(args, const char*);
+                    const char* str = va_arg(vargs, const char*);
                     VGA::print_str(str);
                     break;
                 }
                 case 'x':
                 {
-                    int value = va_arg(args, int);
+                    int value = va_arg(vargs, int);
                     itoa(value, buf, 16);
                     VGA::print_str(buf);
                     break;
                 }
                 case 'c':
                 {
-                    char c = va_arg(args, int);
+                    char c = va_arg(vargs, int);
                     VGA::print_chr(c);
                     break;
                 }
@@ -135,5 +144,5 @@ void printf(const char* fmt, ...)
         fmt++;
     }
 
-    va_end(args);
+    va_end(vargs);
 }

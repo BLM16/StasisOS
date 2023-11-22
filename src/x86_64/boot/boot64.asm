@@ -31,6 +31,4 @@ kernel_start:
 
     ; hang the CPU if the kernel falls through
     cli
-    .hang:
-        hlt
-        jmp .hang
+    hlt
