@@ -52,6 +52,7 @@ void parse_multiboot(const MB2_information_structure* MBI)
         case MB2_TYPE_MEMMAP:
             printf("Memory map found.\n");
             parse_memmap(reinterpret_cast<MB2_tag_memmap*>(tag));
+            init_virtmem(reinterpret_cast<MB2_tag_memmap*>(tag));
             break;
 
         case MB2_TYPE_VBEINFO:

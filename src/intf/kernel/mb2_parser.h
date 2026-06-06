@@ -1,6 +1,7 @@
 #pragma once
 
 #include "multiboot2.h"
+#include "kernel/mem/virtmem.h"
 
 extern "C" uintptr_t KERNEL_VMA;
 
