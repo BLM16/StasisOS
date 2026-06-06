@@ -9,8 +9,8 @@ namespace Color = VGA::Color;
 namespace drivers::keyboard
 {
     /// @brief The handler for the keyboard's IRQ1.
-    /// @param frame Required for __attribute__((interrupt))
-    void irq_handler(struct interrupt_frame *frame)
+    /// @param frame Required for __interrupt
+    void __interrupt irq_handler(struct interrupt_frame *frame)
     {
         sendEOI(1); // ACK and ask for scan code
 

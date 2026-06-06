@@ -1,8 +1,5 @@
 #include "idt.h"
-#include "isr.h"
-#include "gdt.h"
 #include "drivers/keyboard/irq_handler.h"
-#include "pic.h"
 
 /// @brief The IDT to hold the ISR definitions.
 static IDT_Entry idt[IDT_ENTRIES];

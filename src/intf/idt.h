@@ -1,6 +1,10 @@
 #pragma once
 
 #include <stdint.h>
+#include "isr.h"
+#include "gdt.h"
+#include "pic.h"
+#include "util/attributes.h"
 
 #define IDT_ENTRIES 256
 
@@ -10,7 +14,7 @@
 #define ENTRY_GATE_TRAP 0xF
 
 /// @brief Represents an IDT entry in the appropriate memory layout.
-typedef struct __attribute__((packed)) IDT_Entry {
+typedef struct __packed IDT_Entry {
     uint16_t offset_low;
     uint16_t segment;       // GDT segment on which to run the ISR
     uint8_t  ist;           // 3 bit offset into the IST (ignored if 0)
@@ -21,7 +25,7 @@ typedef struct __attribute__((packed)) IDT_Entry {
 } IDT_Entry;
 
 /// @brief Represents the IDT pointer to be loaded into the idtr register.
-typedef struct __attribute__((packed)) IDT_Ptr {
+typedef struct __packed IDT_Ptr {
     uint16_t limit;
     uint64_t base;
 } IDT_Ptr;

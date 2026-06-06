@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include "util/attributes.h"
 
 #define VGA_BUFFER ((VGA_Cell*) 0xB8000)
 
@@ -47,7 +48,7 @@ namespace drivers::video::VGA
     } Cursor;
 
     /// @brief Represents a single cell in the VGA tracking both the character and the brush for that character.
-    typedef struct __attribute__((packed)) VGA_Cell {
+    typedef struct __packed VGA_Cell {
         uint8_t character;
         uint8_t color;
     } VGA_Cell;
